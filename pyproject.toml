@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "md2epub"
-version = "0.1.0"
+version = "0.1.1"
 description = "One markdown file plus one cover image. Out come EPUB, PDF, DOCX, and manuscript markdown, with dash and banned-string verification baked in."
 readme = "README.md"
 authors = [

@@ -17,7 +17,7 @@ This tool encodes those choices once, so "I edited the source, regenerate the eb
 Must be on PATH:
 
 - `pandoc` (with `xelatex` available as a PDF engine)
-- `magick` (ImageMagick 7, not the deprecated `convert`)
+- `magick` (ImageMagick 7) **or** `convert` + `identify` (ImageMagick 6). Tool auto-detects which is present.
 - `pdfunite` (poppler-utils)
 - `pdftotext` (poppler-utils, used by verification)
 

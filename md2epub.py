@@ -36,6 +36,7 @@ CLI flags override YAML.
 """
 import argparse
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -45,6 +46,28 @@ from pathlib import Path
 
 DASH_PATTERN = re.compile(r'[–—―−]')
 KDP_COVER_SIZE = (1707, 2560)
+
+
+def _identify_cmd():
+    """Return the argv prefix for an `identify`-equivalent call.
+    ImageMagick 7 ships `magick`; IM6 ships `identify` separately. Either works."""
+    if shutil.which('magick'):
+        return ['magick', 'identify']
+    if shutil.which('identify'):
+        return ['identify']
+    raise RuntimeError("ImageMagick not found. Install `imagemagick` (provides `identify`) "
+                       "or ImageMagick 7 (provides `magick`).")
+
+
+def _convert_cmd():
+    """Return the argv prefix for an image-conversion call.
+    ImageMagick 7 uses `magick <src> ...`; IM6 uses `convert <src> ...`."""
+    if shutil.which('magick'):
+        return ['magick']
+    if shutil.which('convert'):
+        return ['convert']
+    raise RuntimeError("ImageMagick not found. Install `imagemagick` (provides `convert`) "
+                       "or ImageMagick 7 (provides `magick`).")
 
 
 def parse_yaml_frontmatter(text):
@@ -76,7 +99,7 @@ def slugify(title):
 
 def cover_dimensions(path):
     r = subprocess.run(
-        ['magick', 'identify', '-format', '%w %h', str(path)],
+        _identify_cmd() + ['-format', '%w %h', str(path)],
         capture_output=True, text=True, check=True,
     )
     w, h = r.stdout.strip().split()
@@ -84,14 +107,14 @@ def cover_dimensions(path):
 
 
 def prepare_cover(src, work_dir, target=KDP_COVER_SIZE):
-    """Return a JPG cover path at >= target dimensions. Upscale via magick Lanczos if needed."""
+    """Return a JPG cover path at >= target dimensions. Upscale via Lanczos if needed."""
     w, h = cover_dimensions(src)
     needs_resize = w < target[0] or h < target[1]
     needs_jpg = src.suffix.lower() not in ('.jpg', '.jpeg')
     if not needs_resize and not needs_jpg:
         return src
     out = work_dir / 'cover-kdp.jpg'
-    cmd = ['magick', str(src), '-filter', 'Lanczos']
+    cmd = _convert_cmd() + [str(src), '-filter', 'Lanczos']
     if needs_resize:
         cmd += ['-resize', f'{target[0]}x{target[1]}']
     cmd += ['-quality', '92', str(out)]
