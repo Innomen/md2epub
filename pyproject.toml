@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "md2epub"
+version = "0.1.0"
+description = "One markdown file plus one cover image. Out come EPUB, PDF, DOCX, and manuscript markdown, with dash and banned-string verification baked in."
+readme = "README.md"
+authors = [
+    {name = "Brandon M. Sergent", email = "brandon.sergent@gmail.com"},
+]
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+keywords = ["epub", "pandoc", "ebook", "kdp", "publishing"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Text Processing :: Markup",
+]
+
+[project.scripts]
+md2epub = "md2epub:main"
+
+[project.urls]
+Homepage = "https://github.com/Innomen/md2epub"
+Issues = "https://github.com/Innomen/md2epub/issues"
+
+[tool.setuptools]
+py-modules = ["md2epub"]
